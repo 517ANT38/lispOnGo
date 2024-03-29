@@ -25,7 +25,14 @@ func parce(s string) (*List, int) {
 			right_p += 1
 
 		} else {
-			t.Car = parceAtom(s[i:])
+
+			car, sd := parceAtom(s[i:])
+			if len(car) == 0 {
+				continue
+
+			}
+			t.Car = car
+			i += sd
 		}
 
 		t.Cdr = new(List)
@@ -35,16 +42,18 @@ func parce(s string) (*List, int) {
 	return r, i
 }
 
-func parceAtom(s string) string {
+func parceAtom(s string) (string, int) {
 	builder := new(strings.Builder)
-	for _, c := range s {
+	var i int
+	for i = 0; i < len(s); i++ {
+		c := s[i]
 		if c == ' ' || c == ')' {
 			break
 		}
 		if c == ')' {
 			continue
 		}
-		builder.WriteRune(c)
+		builder.WriteByte(c)
 	}
-	return builder.String()
+	return builder.String(), i
 }
